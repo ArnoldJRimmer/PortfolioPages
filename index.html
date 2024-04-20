@@ -60,7 +60,7 @@
     </div>
     <div class="section">
         <h2>Implementation Details</h2>
-        <p>The color-changing mechanic was implemented using Unity's powerful scripting capabilities in C#. Below is a simplified version of the script:</p>
+        <p>The color-changing mechanic was implemented using Unity's powerful scripting capabilities in C#. Below is the code I used within Unity, where I will explain how it worked:</p>
         <pre><code>
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -72,13 +72,11 @@ public class AdjustSaturation : MonoBehaviour
     private ColorAdjustments colorAdjustments;
     private float currentSaturation;
     private float targetSaturation; // The target saturation value
-    [SerializeField,Range(1,100)]
-    private float incrementValue = 50f;
+    [SerializeField, Range(1,100)]
+    private float incrementValue = 50f; // Increment value for the saturation
     [SerializeField]
     private float changeDuration = 5f; // Duration over which to change saturation
     private bool isAdjusting = false; // Internal flag to control the adjustment
-
-   
 
     // Property to start or stop the adjustment from other classes
     public void StartAdjusting()
@@ -87,7 +85,6 @@ public class AdjustSaturation : MonoBehaviour
         currentSaturation = colorAdjustments.saturation.value;
         targetSaturation = currentSaturation + incrementValue;
         colorAdjustments.saturation.Override(currentSaturation); // Start from the initial saturation
-               
     }
 
     void Start()
@@ -96,7 +93,6 @@ public class AdjustSaturation : MonoBehaviour
         {
             // Initialize with the initial saturation
             currentSaturation = colorAdjustments.saturation.value;
-
         }
     }
 
@@ -114,41 +110,14 @@ public class AdjustSaturation : MonoBehaviour
             // Check if we have reached the target saturation
             if (Mathf.Approximately(newSaturation, targetSaturation))
             {
-                //Update with final value
+                // Update with final value
                 currentSaturation = colorAdjustments.saturation.value;
                 targetSaturation = currentSaturation + incrementValue;
-           
+
                 // Stop adjusting as we have reached the target
                 isAdjusting = false;
-             
             }
-
-           
         }
     }
 }
-        </code></pre>
-        <p>This script changes the color of an object's material to a random color when the space bar is pressed.</p>
-    </div>
-    <div class="section">
-        <h2>Challenges Faced</h2>
-        <p>One of the main challenges was ensuring that the color change would be smooth and visually appealing. This involved fine-tuning the randomness and the transition effects between colors.</p>
-    </div>
-    <div class="section">
-        <h2>Personal Learning</h2>
-        <p>Through this project, I've deepened my understanding of Unity's rendering system and improved my problem-solving skills in a real-world application of game development.</p>
-    </div>
-    <footer>
-        <p>Thank you for visiting! Check out more of my work <a href="your-portfolio-url">here</a>.</p>
-    </footer>
-    <script>
-        function changePageColor() {
-            document.body.style.backgroundColor = "#FFFFFF"; // Change to full color
-            var sections = document.querySelectorAll('.section, .header, footer');
-            sections.forEach(function(section) {
-                section.style.backgroundColor = "#FFFFFF"; // Change sections to full color
-            });
-        }
-    </script>
-</body>
-</html>
+        </code></pre
