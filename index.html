@@ -63,14 +63,67 @@
         <p>The color-changing mechanic was implemented using Unity's powerful scripting capabilities in C#. Below is a simplified version of the script:</p>
         <pre><code>
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.HighDefinition;
 
-public class ColorChanger : MonoBehaviour
+public class AdjustSaturation : MonoBehaviour
 {
+    public Volume postProcessVolume; // Assign the Volume in the inspector
+    private ColorAdjustments colorAdjustments;
+    private float currentSaturation;
+    private float targetSaturation; // The target saturation value
+    [SerializeField,Range(1,100)]
+    private float incrementValue = 50f;
+    [SerializeField]
+    private float changeDuration = 5f; // Duration over which to change saturation
+    private bool isAdjusting = false; // Internal flag to control the adjustment
+
+   
+
+    // Property to start or stop the adjustment from other classes
+    public void StartAdjusting()
+    {
+        isAdjusting = true;
+        currentSaturation = colorAdjustments.saturation.value;
+        targetSaturation = currentSaturation + incrementValue;
+        colorAdjustments.saturation.Override(currentSaturation); // Start from the initial saturation
+               
+    }
+
+    void Start()
+    {
+        if (postProcessVolume.profile.TryGet<ColorAdjustments>(out colorAdjustments))
+        {
+            // Initialize with the initial saturation
+            currentSaturation = colorAdjustments.saturation.value;
+
+        }
+    }
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        // Check if we should start adjusting
+        if (isAdjusting)
         {
-            GetComponent<Renderer>().material.color = new Color(Random.value, Random.value, Random.value);
+            // Calculate the new saturation value based on the time elapsed
+            float newSaturation = Mathf.MoveTowards(colorAdjustments.saturation.value, targetSaturation,
+                                                    Time.deltaTime / changeDuration * Mathf.Abs(targetSaturation - currentSaturation));
+            // Apply the new saturation value
+            colorAdjustments.saturation.Override(newSaturation);
+
+            // Check if we have reached the target saturation
+            if (Mathf.Approximately(newSaturation, targetSaturation))
+            {
+                //Update with final value
+                currentSaturation = colorAdjustments.saturation.value;
+                targetSaturation = currentSaturation + incrementValue;
+           
+                // Stop adjusting as we have reached the target
+                isAdjusting = false;
+             
+            }
+
+           
         }
     }
 }
